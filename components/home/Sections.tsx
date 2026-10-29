@@ -10,6 +10,7 @@ import {
   SMOKED_MEAT_INCLUDES,
   SMOKED_MEAT_SIDES,
   getProduct,
+  type VisualKey,
 } from "@/data/menu";
 import { site } from "@/data/site";
 import { formatDA } from "@/lib/format";
@@ -20,7 +21,6 @@ import { DishArt } from "@/components/illustrations/DishArt";
 import { ButtonLink, buttonClass } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
-import { SetupHint } from "@/components/ui/SetupHint";
 
 const container = "mx-auto w-full max-w-[88rem] px-4 sm:px-6 lg:px-10";
 
@@ -222,36 +222,21 @@ export function MenuPreview() {
 }
 
 /* ——— Ambiance / galerie ——— */
-export function Gallery() {
-  if (galleryPhotos.length > 0) {
-    return (
-      <section aria-labelledby="galerie-title" className="py-24 sm:py-32">
-        <div className={container}>
-          <SectionHeading eyebrow="Ambiance" title={<span id="galerie-title">À la table Meat Love</span>} />
-          <div className="mt-14 grid auto-rows-[14rem] grid-cols-2 gap-4 md:auto-rows-[18rem] md:grid-cols-4">
-            {galleryPhotos.slice(0, 6).map((src, i) => (
-              <Reveal
-                key={src}
-                delay={i * 80}
-                className={cn("relative overflow-hidden rounded-[1.25rem]", i === 0 && "col-span-2 row-span-2", i === 3 && "md:col-span-2")}
-              >
-                <Image src={src} alt={`Meat Love — photo ${i + 1}`} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover transition-transform duration-[1400ms] hover:scale-105" />
-              </Reveal>
-            ))}
-          </div>
-          <p className="mt-4 text-xs text-smoke">Photos d&apos;ambiance non contractuelles.</p>
-        </div>
-      </section>
-    );
-  }
+type GalleryTile = { kind: "photo"; src: string } | { kind: "art"; visual: VisualKey; text: string };
 
-  // Sans photos réelles : mosaïque éditoriale (illustrations + manifeste).
-  const tiles = [
-    { visual: "brisket-burger", text: "Smoked Brisket Burger", span: "col-span-2 row-span-2" },
-    { visual: "lamb-neck", text: "Braise allumée à midi", span: "" },
-    { visual: "smoked-chicken", text: "Poulet fumé", span: "" },
-    { visual: "soup", text: "Produits frais du jour", span: "md:col-span-2" },
-  ] as const;
+// Mosaïque : les photos fournies d'abord, complétées par les visuels de la maison.
+const artTiles: GalleryTile[] = [
+  { kind: "art", visual: "brisket-burger", text: "Smoked Brisket Burger" },
+  { kind: "art", visual: "lamb-neck", text: "Braise allumée à midi" },
+  { kind: "art", visual: "smoked-chicken", text: "Poulet fumé" },
+  { kind: "art", visual: "soup", text: "Produits frais du jour" },
+];
+const tileSpans = ["col-span-2 row-span-2", "", "", "md:col-span-2"];
+
+export function Gallery() {
+  const photos: GalleryTile[] = galleryPhotos.slice(0, 4).map((src) => ({ kind: "photo", src }));
+  const tiles = [...photos, ...artTiles].slice(0, Math.max(4, photos.length));
+
   return (
     <section aria-labelledby="galerie-title" className="py-24 sm:py-32">
       <div className={container}>
@@ -259,23 +244,36 @@ export function Gallery() {
         <div className="mt-14 grid auto-rows-[12rem] grid-cols-2 gap-4 md:auto-rows-[16rem] md:grid-cols-4">
           {tiles.map((tile, i) => (
             <Reveal
-              key={tile.text}
+              key={tile.kind === "photo" ? tile.src : tile.text}
               delay={i * 90}
               className={cn(
                 "group relative flex items-end overflow-hidden rounded-[1.25rem] border border-ivory/10 bg-coal-900 p-5",
-                tile.span,
+                tileSpans[i % tileSpans.length],
               )}
             >
-              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,color-mix(in_oklab,var(--color-ember)_40%,transparent),transparent_65%)]" />
-              <DishArt visual={tile.visual} className="dish-art absolute inset-0 m-auto h-[80%] w-[80%] text-cream/70 transition-transform duration-[1400ms] ease-out-expo group-hover:scale-105" />
-              <p className={cn("relative font-serif leading-none italic", i === 0 ? "text-4xl sm:text-5xl" : "text-2xl sm:text-3xl")}>{tile.text}</p>
+              {tile.kind === "photo" ? (
+                <>
+                  <Image
+                    src={tile.src}
+                    alt="Grillades au charbon — photo d'ambiance"
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-105"
+                  />
+                  <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-coal-950/80 via-coal-950/10 to-transparent" />
+                  <p className="relative font-serif text-4xl leading-none italic sm:text-5xl">Grillades au charbon</p>
+                </>
+              ) : (
+                <>
+                  <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,color-mix(in_oklab,var(--color-ember)_40%,transparent),transparent_65%)]" />
+                  <DishArt visual={tile.visual} className="dish-art absolute inset-0 m-auto h-[80%] w-[80%] text-cream/70 transition-transform duration-[1400ms] ease-out-expo group-hover:scale-105" />
+                  <p className={cn("relative font-serif leading-none italic", i === 0 ? "text-4xl sm:text-5xl" : "text-2xl sm:text-3xl")}>{tile.text}</p>
+                </>
+              )}
             </Reveal>
           ))}
         </div>
-        <SetupHint className="mt-6">
-          Galerie : les photos du restaurant et des plats remplaceront automatiquement ces visuels dès qu&apos;elles seront
-          fournies.
-        </SetupHint>
+        {photos.length > 0 ? <p className="mt-4 text-xs text-smoke">Photos d&apos;ambiance non contractuelles.</p> : null}
       </div>
     </section>
   );

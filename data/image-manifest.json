@@ -1,5 +1,7 @@
 {
   "menu": {},
-  "gallery": [],
-  "hero": null
+  "gallery": [
+    "/images/gallery/01-plateau-grillades.jpg"
+  ],
+  "hero": "/images/hero.jpg"
 }

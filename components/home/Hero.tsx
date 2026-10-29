@@ -17,8 +17,10 @@ export function Hero() {
       <div aria-hidden className="absolute inset-0 -z-20 bg-coal-950">
         {heroPhoto ? (
           <>
-            <Image src={heroPhoto} alt="" fill priority sizes="100vw" className="object-cover opacity-70" />
-            <div className="absolute inset-0 bg-gradient-to-r from-coal-950 via-coal-950/70 to-transparent" />
+            <Image src={heroPhoto} alt="" fill priority sizes="100vw" className="object-cover object-[60%_center] opacity-60" />
+            <div className="absolute inset-0 bg-gradient-to-r from-coal-950 via-coal-950/75 to-coal-950/20" />
+            <div className="absolute inset-0 bg-gradient-to-t from-coal-950 via-transparent to-coal-950/60" />
+            <div className="absolute -bottom-[30%] left-1/2 h-[70vmax] w-[110vmax] -translate-x-1/2 rounded-[100%] bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--color-ember)_35%,transparent),transparent)] opacity-60 mix-blend-screen" />
           </>
         ) : (
           <>
