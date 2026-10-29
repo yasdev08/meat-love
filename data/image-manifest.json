@@ -1,5 +1,20 @@
 {
-  "menu": {},
+  "menu": {
+    "bourek": "/images/menu/bourek.jpg",
+    "chicken-burger": "/images/menu/chicken-burger.jpg",
+    "classic-meat-burger": "/images/menu/classic-meat-burger.jpg",
+    "collier-agneau": "/images/menu/collier-agneau.jpg",
+    "creme-brulee": "/images/menu/creme-brulee.jpg",
+    "epaule-agneau": "/images/menu/epaule-agneau.jpg",
+    "lamb-tchang": "/images/menu/lamb-tchang.jpg",
+    "pasta-fettuccine-alfredo": "/images/menu/pasta-fettuccine-alfredo.jpg",
+    "plat-poulet-grille": "/images/menu/plat-poulet-grille.jpg",
+    "poulet-fume": "/images/menu/poulet-fume.jpg",
+    "smoked-brisket-burger": "/images/menu/smoked-brisket-burger.jpg",
+    "soupe-champignons": "/images/menu/soupe-champignons.jpg",
+    "soupe-lentilles-corail": "/images/menu/soupe-lentilles-corail.jpg",
+    "tiramisu": "/images/menu/tiramisu.jpg"
+  },
   "gallery": [
     "/images/gallery/01-plateau-grillades.jpg"
   ],

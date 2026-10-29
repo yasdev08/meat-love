@@ -161,7 +161,7 @@ export function CartDrawer() {
             <ul className="flex-1 divide-y divide-ivory/10 overflow-y-auto overscroll-contain px-6">
               {lines.map((line) => (
                 <li key={line.key} className="flex gap-4 py-5">
-                  <DishVisual product={line.product} sizes="80px" className="size-20 shrink-0 rounded-xl" />
+                  <DishVisual product={line.product} label={false} sizes="80px" className="size-20 shrink-0 rounded-xl" />
                   <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
