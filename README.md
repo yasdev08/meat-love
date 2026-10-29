@@ -37,12 +37,13 @@ npm test           # vérification de la carte (noms, prix, packs, arabe) et du 
 
 - **Carte, prix, packs** : `data/menu.ts`, la seule source utilisée par toutes les pages, le panier et les données structurées.
   `tests/menu.test.ts` contient une copie indépendante de la carte officielle : tout écart fait échouer `npm test`.
-- **Coordonnées du restaurant** : `data/site.ts` (adresse, téléphone, horaires, réseaux, Google Maps).
-  Une valeur laissée à `null` est masquée ; rien n'est inventé.
+- **Coordonnées du restaurant** : `data/site.ts` (téléphone, horaires, services, réseaux, Google Maps), repris du
+  site officiel du restaurant. Une valeur absente est masquée ; rien n'est inventé.
 - **Variables d'environnement** (facultatives) :
-  - `NEXT_PUBLIC_SITE_URL` : URL publique (SEO, sitemap, Open Graph). Ex. `https://meatlove.example`
+  - `NEXT_PUBLIC_SITE_URL` : URL publique (SEO, sitemap, Open Graph). Sur Vercel, l'URL de production est utilisée
+    automatiquement si cette variable est absente.
   - `NEXT_PUBLIC_WHATSAPP_NUMBER` : numéro WhatsApp international (ex. `+213…`). Active l'envoi de la commande via WhatsApp.
-  - `NEXT_PUBLIC_SHOW_SETUP_HINTS=false` : masque les encarts « à confirmer » destinés à la présentation.
+  - `NEXT_PUBLIC_SHOW_SETUP_HINTS=true` : affiche les encarts « à compléter » (informations manquantes).
 
 ## Logo
 
@@ -70,12 +71,16 @@ Le script `scripts/generate-image-manifest.mjs` les détecte automatiquement.
 
 ## Commande
 
-- Le panier est entièrement fonctionnel : ajout, packs, quantités, suppression, sous-total, sauvegarde locale (`localStorage`).
-- **Sans numéro WhatsApp configuré**, le panier propose de copier le récapitulatif et indique clairement que la commande
-  n'est pas transmise au restaurant.
-- **Avec `NEXT_PUBLIC_WHATSAPP_NUMBER`**, le bouton « Commander via WhatsApp » ouvre WhatsApp avec un message pré-rempli
-  (articles, quantités, packs, prix, total). La commande n'est transmise qu'une fois le message envoyé par le client.
-- Aucun paiement en ligne et aucun faux écran de confirmation.
+1. Panier : ajout, packs, quantités, suppression, sous-total, sauvegarde locale (`localStorage`).
+2. « Commander » : formulaire (livraison / à emporter / sur place, nom, téléphone algérien validé, adresse si
+   livraison, heure souhaitée, remarque). Les coordonnées sont mémorisées pour la commande suivante.
+3. Envoi : la messagerie SMS du client s'ouvre avec la commande complète adressée au 0797 98 11 97
+   (`sms:`). La commande part quand le client appuie sur « Envoyer ». Boutons « Appeler » et « Copier » en secours.
+4. Si `NEXT_PUBLIC_WHATSAPP_NUMBER` est défini, WhatsApp devient le canal principal (SMS en secours).
+
+Le statut « ouvert / fermé » est calculé à l'heure d'Alger ; hors horaires, le formulaire le signale.
+Aucun paiement en ligne et aucune fausse confirmation : le site indique clairement que l'envoi se fait depuis
+le téléphone du client.
 
 ## Déploiement
 

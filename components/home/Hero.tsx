@@ -1,5 +1,7 @@
 import Image from "next/image";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, Phone } from "lucide-react";
+import { site } from "@/data/site";
+import { OpenStatus } from "@/components/ui/OpenStatus";
 import { heroPhoto } from "@/lib/images";
 import { ButtonLink } from "@/components/ui/Button";
 import { OrderButton } from "@/components/cart/OrderButton";
@@ -48,6 +50,16 @@ export function Hero() {
           <div className="hero-in mt-10 flex flex-col gap-3 sm:flex-row [animation-delay:500ms]">
             <ButtonLink href="/menu">Découvrir le menu</ButtonLink>
             <OrderButton variant="outline">Commander</OrderButton>
+          </div>
+          <div className="hero-in mt-8 flex flex-col gap-3 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 [animation-delay:600ms]">
+            <OpenStatus />
+            {site.phone ? (
+              <a href={`tel:${site.phone.tel}`} className="inline-flex min-h-11 items-center gap-2 text-cream transition-colors hover:text-glow sm:min-h-0">
+                <Phone className="size-4 text-ember-bright" aria-hidden />
+                <span className="font-display text-lg font-bold tracking-wide">{site.phone.display}</span>
+              </a>
+            ) : null}
+            <span className="text-ash">{site.services.join(" · ")}</span>
           </div>
         </div>
 

@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { MapPin, Phone } from "lucide-react";
 import { categories } from "@/data/menu";
 import { site } from "@/data/site";
+import { groupHours } from "@/lib/hours";
 import { navLinks } from "./nav";
 import { Wordmark } from "./Wordmark";
 import { SocialIcon, socialLabel } from "./SocialIcon";
@@ -49,25 +51,37 @@ export function SiteFooter() {
           <div>
             <h2 className="font-display text-sm font-bold uppercase tracking-[0.3em] text-ember-bright">Nous trouver</h2>
             <ul className="mt-5 space-y-3 text-cream/80">
-              {site.address ? (
-                <li>
-                  {site.address.street}
-                  <br />
-                  {site.address.postalCode} {site.address.city}
-                </li>
-              ) : null}
               {site.phone ? (
                 <li>
-                  <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="hover:text-ivory">
-                    {site.phone}
+                  <a href={`tel:${site.phone.tel}`} className="inline-flex min-h-10 items-center gap-2 font-display text-xl font-bold tracking-wide text-ivory hover:text-glow">
+                    <Phone className="size-4 text-ember-bright" aria-hidden />
+                    {site.phone.display}
                   </a>
                 </li>
               ) : null}
-              <li>
-                <Link href="/contact" className="inline-flex min-h-10 items-center underline-offset-4 hover:text-ivory hover:underline">
-                  Contact &amp; accès
-                </Link>
+              <li className="space-y-1 text-sm">
+                {groupHours(site.openingHours).map((g) => (
+                  <p key={g.days}>
+                    <span className="text-cream">{g.days}</span> · <span className="tabular-nums">{g.hours}</span>
+                  </p>
+                ))}
+                <p className="text-ash">
+                  {site.hoursNote} — dernière commande à {site.lastOrder}
+                </p>
               </li>
+              {site.map ? (
+                <li>
+                  <a
+                    href={site.map.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-10 items-center gap-2 underline-offset-4 hover:text-ivory hover:underline"
+                  >
+                    <MapPin className="size-4 text-ember-bright" aria-hidden />
+                    Itinéraire Google Maps
+                  </a>
+                </li>
+              ) : null}
             </ul>
             {site.socials.length > 0 ? (
               <ul className="mt-6 flex gap-3">
@@ -96,8 +110,8 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-8 flex flex-col gap-3 border-t border-ivory/10 pt-6 text-sm text-smoke sm:flex-row sm:items-center sm:justify-between">
-          <p>© Meat Love. Tous droits réservés.</p>
-          <p>Prix en dinars algériens (DA).</p>
+          <p>© Meat Love — Burgers &amp; Grillades. Tous droits réservés.</p>
+          <p>{site.services.join(" · ")} · Prix en dinars algériens (DA)</p>
         </div>
       </div>
     </footer>

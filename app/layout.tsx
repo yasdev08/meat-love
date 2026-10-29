@@ -33,20 +33,41 @@ const arabic = Noto_Kufi_Arabic({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Meat Love — Viandes fumées, agneau & burgers",
+    default: "Meat Love — Viandes fumées, grillades au charbon & burgers",
     template: "%s · Meat Love",
   },
   description: site.description,
   applicationName: "Meat Love",
+  keywords: [
+    "Meat Love",
+    "restaurant",
+    "viandes fumées",
+    "agneau fumé",
+    "épaule d'agneau",
+    "grillades au charbon",
+    "burger",
+    "smash burger",
+    "smoked brisket burger",
+    "poulet fumé",
+    "livraison",
+    "à emporter",
+    "Algérie",
+  ],
+  category: "restaurant",
+  creator: "Meat Love",
+  formatDetection: { telephone: true, address: false, email: false },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   openGraph: {
     type: "website",
-    locale: "fr_FR",
+    locale: "fr_DZ",
     siteName: "Meat Love",
     title: "Meat Love — Le feu. La viande. L'amour.",
     description: site.description,
+    url: "/",
   },
   twitter: { card: "summary_large_image", title: "Meat Love — Le feu. La viande. L'amour.", description: site.description },
   alternates: { canonical: "/" },
+  other: site.phone ? { "contact:phone_number": site.phone.tel } : {},
 };
 
 export const viewport: Viewport = {

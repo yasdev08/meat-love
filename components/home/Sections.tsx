@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, MapPin, Phone, Clock } from "lucide-react";
+import { OpenStatus } from "@/components/ui/OpenStatus";
+import { HoursList } from "@/components/ui/HoursList";
 import {
   categories,
   productsIn,
@@ -15,7 +17,7 @@ import { galleryPhotos } from "@/lib/images";
 import { cn } from "@/lib/cn";
 import { ProductCard } from "@/components/menu/ProductCard";
 import { DishArt } from "@/components/illustrations/DishArt";
-import { ButtonLink } from "@/components/ui/Button";
+import { ButtonLink, buttonClass } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { SetupHint } from "@/components/ui/SetupHint";
@@ -237,6 +239,7 @@ export function Gallery() {
               </Reveal>
             ))}
           </div>
+          <p className="mt-4 text-xs text-smoke">Photos d&apos;ambiance non contractuelles.</p>
         </div>
       </section>
     );
@@ -304,52 +307,53 @@ export function StoryTeaser() {
 
 /* ——— Accès & contact ——— */
 export function VisitUs() {
-  const hasAny = site.address || site.phone || site.openingHours;
   return (
-    <section aria-labelledby="visite-title" className="py-24 sm:py-32">
-      <div className={cn(container, "grid gap-12 lg:grid-cols-2 lg:items-end")}>
-        <SectionHeading
-          eyebrow="Nous rendre visite"
-          title={<span id="visite-title">La braise vous attend</span>}
-          intro={<p>Toutes nos coordonnées sont réunies sur la page contact. En attendant, composez votre commande depuis la carte.</p>}
-        />
-        <Reveal delay={120} className="space-y-4">
-          {hasAny ? (
-            <ul className="divide-y divide-ivory/10 rounded-[1.5rem] border border-ivory/10">
-              {site.address ? (
-                <li className="flex gap-4 p-5">
-                  <MapPin className="mt-1 size-5 text-ember-bright" aria-hidden />
-                  <span>
-                    {site.address.street}, {site.address.city}
-                  </span>
-                </li>
-              ) : null}
-              {site.phone ? (
-                <li className="flex gap-4 p-5">
-                  <Phone className="mt-1 size-5 text-ember-bright" aria-hidden />
-                  <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="hover:text-glow">
-                    {site.phone}
-                  </a>
-                </li>
-              ) : null}
-              {site.openingHours ? (
-                <li className="flex gap-4 p-5">
-                  <Clock className="mt-1 size-5 text-ember-bright" aria-hidden />
-                  <span>{site.openingHours.map((h) => `${h.days} : ${h.hours}`).join(" · ")}</span>
-                </li>
-              ) : null}
-            </ul>
-          ) : (
-            <SetupHint>
-              Adresse, téléphone et horaires apparaîtront ici dès qu&apos;ils auront été confirmés par le restaurant.
-            </SetupHint>
-          )}
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/contact">Contact &amp; accès</ButtonLink>
-            <ButtonLink href="/menu" variant="outline">
-              Voir le menu
-            </ButtonLink>
+    <section id="horaires" aria-labelledby="visite-title" className="scroll-mt-24 py-24 sm:py-32">
+      <div className={cn(container, "grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20")}>
+        <div>
+          <SectionHeading
+            eyebrow="Horaires & accès"
+            title={<span id="visite-title">La braise vous attend</span>}
+            intro={
+              <p>
+                Sur place, à emporter ou en livraison : appelez-nous, on s&apos;occupe du reste.
+              </p>
+            }
+          />
+          <Reveal delay={100} className="mt-10 flex flex-col gap-3 sm:flex-row">
+            {site.phone ? (
+              <a href={`tel:${site.phone.tel}`} className={buttonClass("primary")}>
+                <Phone className="size-5" aria-hidden />
+                {site.phone.display}
+              </a>
+            ) : null}
+            {site.map ? (
+              <a href={site.map.link} target="_blank" rel="noopener noreferrer" className={buttonClass("outline")}>
+                <MapPin className="size-5" aria-hidden />
+                Nous trouver
+              </a>
+            ) : null}
+          </Reveal>
+          <Reveal delay={160} className="mt-8 flex flex-wrap gap-2">
+            {site.services.map((service) => (
+              <span key={service} className="rounded-full border border-ivory/15 px-4 py-2 text-sm text-cream">
+                {service}
+              </span>
+            ))}
+          </Reveal>
+        </div>
+
+        <Reveal delay={120} className="rounded-[1.75rem] border border-ivory/10 bg-coal-900 p-6 sm:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 pb-5">
+            <h3 className="flex items-center gap-2.5 font-display text-xl font-bold uppercase tracking-[0.16em]">
+              <Clock className="size-5 text-ember-bright" aria-hidden /> Horaires
+            </h3>
+            <OpenStatus />
           </div>
+          <HoursList className="mt-2" />
+          <p className="mt-4 text-sm text-ash">
+            {site.hoursNote} — dernière commande à {site.lastOrder}.
+          </p>
         </Reveal>
       </div>
     </section>

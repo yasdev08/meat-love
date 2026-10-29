@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import type { VisualKey } from "@/data/menu";
 import { SMOKED_MEAT_INCLUDES } from "@/data/menu";
+import { site } from "@/data/site";
+import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { cn } from "@/lib/cn";
 import { DishArt } from "@/components/illustrations/DishArt";
 import { EmberField } from "@/components/home/EmberField";
@@ -12,7 +14,7 @@ import { Eyebrow } from "@/components/ui/SectionHeading";
 export const metadata: Metadata = {
   title: "Notre histoire — le feu, la viande, l'amour",
   description:
-    "Meat Love : produits frais du jour, pain brioché maison et braise allumée à midi. Une cuisine de feu et de fumée autour de l'agneau, des burgers et du poulet.",
+    "L'esprit Meat Love : une salle sombre, du bois brut et une braise ouverte. Produits frais du jour, pain brioché maison, grillades au charbon et viande saisie devant vous.",
   alternates: { canonical: "/notre-histoire" },
   openGraph: { title: "Notre histoire · Meat Love", url: "/notre-histoire" },
 };
@@ -32,7 +34,7 @@ const pillars: { title: string; text: string; visual: VisualKey }[] = [
   },
   {
     title: "Braise allumée à midi",
-    text: "À midi, la braise s'allume. Commence alors le travail du feu : la chaleur, la fumée, la patience.",
+    text: "À midi, la braise s'allume. Grillades au charbon, viandes fumées : commence alors le travail du feu.",
     visual: "lamb-shoulder",
   },
 ];
@@ -40,6 +42,7 @@ const pillars: { title: string; text: string; visual: VisualKey }[] = [
 export default function StoryPage() {
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: "Notre histoire", path: "/notre-histoire" }]} />
       <header className="relative isolate overflow-hidden pt-[calc(var(--header-h)+5rem)] pb-24 sm:pb-36">
         <div aria-hidden className="absolute inset-x-0 bottom-0 -z-20 h-[70%] bg-[radial-gradient(ellipse_at_50%_100%,color-mix(in_oklab,var(--color-ember)_32%,transparent),transparent_70%)]" />
         <EmberField density={28} className="absolute inset-0 -z-10 size-full" />
@@ -56,8 +59,7 @@ export default function StoryPage() {
           </Reveal>
           <Reveal delay={200} className="mt-12 max-w-2xl">
             <p className="font-serif text-2xl leading-snug text-cream sm:text-3xl">
-              Le feu. La viande. L&apos;amour. Chez Meat Love, ces trois mots tiennent lieu de recette : une cuisine de braise
-              et de fumée, franche et généreuse.
+              Une salle sombre, du bois brut et une braise ouverte. Chez Meat Love, tout tourne autour du feu.
             </p>
           </Reveal>
         </div>
@@ -84,19 +86,50 @@ export default function StoryPage() {
         ))}
       </section>
 
-      <section aria-labelledby="table-title" className="py-24 sm:py-36">
+      <section aria-labelledby="esprit-title" className="py-24 sm:py-36">
         <div className={cn(container, "grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20")}>
           <Reveal>
-            <Eyebrow>L&apos;hospitalité</Eyebrow>
-            <h2 id="table-title" className="mt-6 font-display text-[clamp(2.6rem,6vw,4.8rem)] leading-[0.9] font-extrabold uppercase">
-              La table, généreuse
+            <Eyebrow>L&apos;esprit Meat Love</Eyebrow>
+            <h2 id="esprit-title" className="mt-6 font-display text-[clamp(2.6rem,6vw,4.8rem)] leading-[0.9] font-extrabold uppercase">
+              Saisie devant vous
             </h2>
           </Reveal>
           <Reveal delay={120}>
-            <p className="font-serif text-2xl leading-snug text-cream italic sm:text-3xl">{SMOKED_MEAT_INCLUDES}</p>
+            <p className="font-serif text-2xl leading-snug text-cream italic sm:text-3xl">
+              La viande est saisie devant vous, assaisonnée simplement, servie généreusement.
+            </p>
             <p className="mt-8 text-lg leading-relaxed text-cream/75">
-              Épaule d&apos;agneau, Lamb Tchang, collier d&apos;agneau ou Bouzelouf : la viande fumée est au centre de la table,
-              entourée de tout ce qui l&apos;accompagne.
+              Burgers smashés, grillades au charbon et sauces maison. Et pour l&apos;agneau fumé, la table se remplit : {SMOKED_MEAT_INCLUDES.charAt(0).toLowerCase() + SMOKED_MEAT_INCLUDES.slice(1)}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      <section aria-labelledby="services-title" className="border-t border-ivory/10 py-20 sm:py-28">
+        <div className={container}>
+          <Reveal>
+            <h2 id="services-title" className="sr-only">
+              Nos services
+            </h2>
+            <ul className="grid gap-px overflow-hidden rounded-[1.75rem] border border-ivory/10 bg-ivory/10 sm:grid-cols-3">
+              {site.services.map((service, i) => (
+                <li key={service} className="flex flex-col gap-6 bg-coal-950 p-8 sm:p-10">
+                  <span className="font-sans text-sm tabular-nums text-ember-bright">0{i + 1}</span>
+                  <span className="font-display text-4xl font-extrabold uppercase sm:text-5xl">{service}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 text-lg text-cream/80">
+              Appelez-nous, on s&apos;occupe du reste
+              {site.phone ? (
+                <>
+                  {" "}:{" "}
+                  <a href={`tel:${site.phone.tel}`} className="font-display text-xl font-bold whitespace-nowrap text-ivory hover:text-glow">
+                    {site.phone.display}
+                  </a>
+                </>
+              ) : null}
+              .
             </p>
           </Reveal>
         </div>
