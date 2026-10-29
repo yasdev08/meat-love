@@ -45,7 +45,7 @@ export function SiteHeader() {
       >
         <div className="mx-auto flex h-[var(--header-h)] max-w-[88rem] items-center justify-between gap-6 px-4 sm:px-6 lg:px-10">
           <Link href="/" className="shrink-0 rounded-md text-ivory" aria-label="Meat Love — accueil">
-            <Wordmark />
+            <Wordmark priority className="h-12 transition-transform duration-500 ease-out-expo hover:scale-105 sm:h-[3.25rem] lg:h-14" />
           </Link>
 
           <nav aria-label="Navigation principale" className="hidden lg:block">
@@ -102,7 +102,7 @@ export function SiteHeader() {
             <h2 id="mobile-nav-title" className="sr-only">
               Navigation
             </h2>
-            <Wordmark />
+            <Wordmark className="h-14" />
             <button
               type="button"
               onClick={() => setMenuOpen(false)}

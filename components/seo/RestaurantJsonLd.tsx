@@ -14,6 +14,8 @@ export function RestaurantJsonLd() {
     description: site.description,
     url: site.url,
     menu: `${site.url}/menu`,
+    logo: `${site.url}/brand/meat-love-logo-badge.png`,
+    image: `${site.url}/brand/meat-love-logo-badge.png`,
     servesCuisine: ["Viandes fumées", "Grillades", "Burgers"],
     hasMenu: {
       "@type": "Menu",

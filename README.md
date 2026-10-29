@@ -44,6 +44,17 @@ npm test           # vérification de la carte (noms, prix, packs, arabe) et du 
   - `NEXT_PUBLIC_WHATSAPP_NUMBER` : numéro WhatsApp international (ex. `+213…`). Active l'envoi de la commande via WhatsApp.
   - `NEXT_PUBLIC_SHOW_SETUP_HINTS=false` : masque les encarts « à confirmer » destinés à la présentation.
 
+## Logo
+
+Logo officiel fourni par le restaurant (tête de taureau), décliné dans `public/brand/` :
+
+- `meat-love-logo-light.png` : version claire détourée pour fond sombre (en-tête, hero, pied de page, image de partage)
+- `meat-love-logo-badge.png` : pastille ronde d'origine (données structurées)
+- `app/icon.png`, `app/apple-icon.png` : icônes du site
+
+Ces fichiers sont extraits d'une capture du logo. Une version vectorielle (SVG/PDF) fournie par le restaurant
+donnera un rendu encore plus net.
+
 ## Photos
 
 Aucune photo réelle n'a été fournie. Le site utilise une série d'illustrations au trait propre à la marque

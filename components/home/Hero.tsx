@@ -3,7 +3,7 @@ import { ArrowDown } from "lucide-react";
 import { heroPhoto } from "@/lib/images";
 import { ButtonLink } from "@/components/ui/Button";
 import { OrderButton } from "@/components/cart/OrderButton";
-import { DishArt } from "@/components/illustrations/DishArt";
+import logo from "@/public/brand/meat-love-logo-light.png";
 import { EmberField } from "./EmberField";
 
 const RING_TEXT = "Produits frais du jour • Pain brioché maison • Braise allumée à midi • ";
@@ -55,7 +55,7 @@ export function Hero() {
         <div aria-hidden className="relative mx-auto hidden aspect-square w-full max-w-[30rem] lg:block">
           <div className="absolute inset-[14%] rounded-full bg-[radial-gradient(circle_at_50%_70%,color-mix(in_oklab,var(--color-ember)_45%,transparent),color-mix(in_oklab,var(--color-coal-900)_90%,transparent)_70%)] shadow-[0_0_120px_-10px_var(--color-ember-deep)]" />
           <div className="absolute inset-[14%] rounded-full border border-ivory/10" />
-          <DishArt visual="lamb-shoulder" className="dish-art absolute inset-[20%] text-cream" />
+          <Image src={logo} alt="" sizes="320px" priority className="absolute inset-0 m-auto h-auto w-[50%] drop-shadow-[0_8px_30px_rgb(0_0_0/0.6)]" />
           <svg viewBox="0 0 200 200" className="absolute inset-0 size-full animate-[spin_60s_linear_infinite] text-cream/70">
             <defs>
               <path id="hero-ring" d="M100 100 m-88 0 a88 88 0 1 1 176 0 a88 88 0 1 1 -176 0" />

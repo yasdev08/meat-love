@@ -12,7 +12,7 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-[88rem] px-4 pt-20 pb-10 sm:px-6 lg:px-10">
         <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div className="max-w-sm">
-            <Wordmark />
+            <Wordmark className="h-28 sm:h-32" />
             <p className="mt-6 font-serif text-3xl leading-tight italic text-cream">Le feu. La viande. L&apos;amour.</p>
             <p className="mt-4 text-ash">Produits frais du jour, pain brioché maison et braise allumée à midi.</p>
           </div>

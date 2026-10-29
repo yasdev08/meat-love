@@ -11,10 +11,10 @@
   --color-cream: #e6d9c3;
   --color-ash: #a89a87;
   --color-smoke: #7d7064;
-  --color-ember: #e35f2b;
-  --color-ember-bright: #f27a3e;
-  --color-ember-deep: #a63a19;
-  --color-glow: #f3a865;
+  --color-ember: #d8452c;
+  --color-ember-bright: #ef6542;
+  --color-ember-deep: #9b2b1c;
+  --color-glow: #f3a072;
 
   --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
