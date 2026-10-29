@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Big_Shoulders, Instrument_Serif, Inter_Tight, Noto_Kufi_Arabic } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/data/site";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CartDrawer } from "@/components/cart/CartDrawer";
@@ -89,6 +90,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <CartDrawer />
           </ProductDialogProvider>
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );

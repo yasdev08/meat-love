@@ -106,6 +106,14 @@ Le statut « ouvert / fermé » est calculé à l'heure d'Alger ; hors horaires,
 Aucun paiement en ligne et aucune fausse confirmation : le site indique clairement que l'envoi se fait depuis
 le téléphone du client.
 
+## Statistiques (Vercel Analytics)
+
+`@vercel/analytics` est installé (`<Analytics />` dans `app/layout.tsx`). Activer **Analytics** dans le projet Vercel
+pour voir les visites, pages vues, pays et appareils. Rien n'est collecté en développement.
+
+Événements personnalisés (visibles sur les offres Vercel qui les incluent) : `add_to_cart` (produit, pack, quantité)
+et `order_sent` (canal, mode, nombre d'articles, total). Aucune donnée personnelle n'est transmise.
+
 ## Déploiement
 
 Aucune configuration d'hébergement n'existait dans le dépôt. Le site est 100 % statique et se déploie tel quel sur

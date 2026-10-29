@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 import { useState } from "react";
 import { ArrowLeft, ClipboardCheck, Copy, MessageCircle, MessageSquareText, Phone, ShoppingBag, Trash2, X } from "lucide-react";
 import { site } from "@/data/site";
@@ -46,6 +47,8 @@ export function CartDrawer() {
           ? buildSmsUrl(site.phone.tel, message)
           : null;
     if (!url) return;
+    // Aucune donnée personnelle (nom, téléphone, adresse) n'est envoyée.
+    track("order_sent", { channel, mode: details.mode, items: count, total: subtotal });
     setSentVia(channel);
     setStep("sent");
     if (channel === "whatsapp") window.open(url, "_blank", "noopener,noreferrer");
