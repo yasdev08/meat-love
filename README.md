@@ -37,12 +37,13 @@ npm test           # vérification de la carte (noms, prix, packs, arabe) et du 
 
 - **Carte, prix, packs** : `data/menu.ts`, la seule source utilisée par toutes les pages, le panier et les données structurées.
   `tests/menu.test.ts` contient une copie indépendante de la carte officielle : tout écart fait échouer `npm test`.
-- **Coordonnées du restaurant** : `data/site.ts` (adresse, téléphone, horaires, réseaux, Google Maps).
-  Une valeur laissée à `null` est masquée ; rien n'est inventé.
+- **Coordonnées du restaurant** : `data/site.ts` (téléphone, horaires, services, réseaux, Google Maps), repris du
+  site officiel du restaurant. Une valeur absente est masquée ; rien n'est inventé.
 - **Variables d'environnement** (facultatives) :
-  - `NEXT_PUBLIC_SITE_URL` : URL publique (SEO, sitemap, Open Graph). Ex. `https://meatlove.example`
+  - `NEXT_PUBLIC_SITE_URL` : URL publique (SEO, sitemap, Open Graph). Sur Vercel, l'URL de production est utilisée
+    automatiquement si cette variable est absente.
   - `NEXT_PUBLIC_WHATSAPP_NUMBER` : numéro WhatsApp international (ex. `+213…`). Active l'envoi de la commande via WhatsApp.
-  - `NEXT_PUBLIC_SHOW_SETUP_HINTS=false` : masque les encarts « à confirmer » destinés à la présentation.
+  - `NEXT_PUBLIC_SHOW_SETUP_HINTS=true` : affiche les encarts « à compléter » (informations manquantes).
 
 ## Logo
 
@@ -57,25 +58,72 @@ donnera un rendu encore plus net.
 
 ## Photos
 
-Aucune photo réelle n'a été fournie. Le site utilise une série d'illustrations au trait propre à la marque
-(`components/illustrations/DishArt.tsx`), qui ne prétendent pas représenter les plats réels.
+Les fiches produits utilisent des **photos d'illustration** libres de droits issues de
+[Pixabay](https://pixabay.com/) (licence Pixabay : usage commercial autorisé, sans attribution obligatoire).
+Elles portent la mention « Photo d'illustration » sur le site. Les plats sans photo (riz, boissons, Bouzelouf)
+gardent les illustrations au trait de la maison (`components/illustrations/DishArt.tsx`).
 
-Pour utiliser les vraies photos, il suffit de déposer les fichiers puis de relancer `npm run dev` ou `npm run build` :
+Le fond du hero (`public/images/hero.jpg`) et la galerie (`public/images/gallery/`) sont des photos d'ambiance.
 
-- `public/images/menu/<id-produit>.jpg|webp|png|avif` (ex. `smoked-brisket-burger.jpg`, `epaule-agneau.webp` ; les identifiants sont dans `data/menu.ts`)
-- `public/images/gallery/*.jpg` : galerie d'ambiance de l'accueil (6 photos max, ordre alphabétique)
-- `public/images/hero.jpg` : fond du hero
+**Pour passer aux vraies photos du restaurant**, il suffit de remplacer les fichiers en gardant les mêmes noms,
+puis de relancer `npm run build` :
+
+- `public/images/menu/<id-produit>.jpg|webp|png|avif` (identifiants dans `data/menu.ts`)
+- `public/images/gallery/*.jpg` (4 photos max, ordre alphabétique)
+- `public/images/hero.jpg`
 
 Le script `scripts/generate-image-manifest.mjs` les détecte automatiquement.
 
+Crédits des photos Pixabay :
+
+| Fichier | Photographe |
+| --- | --- |
+| `smoked-brisket-burger.jpg` | [m_krohn](https://pixabay.com/photos/burger-pulled-pork-grilled-6507710/) |
+| `classic-meat-burger.jpg` | [chris_muschard](https://pixabay.com/photos/burger-food-hamburger-meal-bun-6942015/) |
+| `chicken-burger.jpg` | [shouravsheikh](https://pixabay.com/photos/burger-spicy-healthy-food-chicken-4307719/) |
+| `epaule-agneau.jpg` | [OrcaTec](https://pixabay.com/photos/flesh-poultry-meal-yummy-1450955/) |
+| `lamb-tchang.jpg` | [limarga26](https://pixabay.com/photos/lamb-lamb-shank-steak-food-meal-3529588/) |
+| `collier-agneau.jpg` | [2SIF](https://pixabay.com/photos/pulao-lamb-chop-pulao-lamb-chop-7262662/) |
+| `poulet-fume.jpg` | [maliktabish](https://pixabay.com/photos/saji-roast-chicken-dinner-roasted-4954852/) |
+| `plat-poulet-grille.jpg` | [Rierosa222](https://pixabay.com/photos/chicken-steak-menu-food-lunch-2509164/) |
+| `pasta-fettuccine-alfredo.jpg` | [NickyZangess](https://pixabay.com/photos/pasta-fettuccine-noodles-cream-9783722/) |
+| `soupe-lentilles-corail.jpg` | [Alanyadk](https://pixabay.com/photos/turkish-food-soup-meze-alanya-1379238/) |
+| `soupe-champignons.jpg` | [ReinhardThrainer](https://pixabay.com/photos/soup-cream-soup-yummy-fresh-foam-4528707/) |
+| `bourek.jpg` | [tarina](https://pixabay.com/photos/borek-turkish-snack-fried-1205461/) |
+| `creme-brulee.jpg` | [freestocks-photos](https://pixabay.com/photos/food-drinks-cream-creme-brulee-2940496/) |
+| `tiramisu.jpg` | [Slava_web-designer](https://pixabay.com/photos/tiramisu-dessert-cake-food-cream-8503073/) |
+
 ## Commande
 
-- Le panier est entièrement fonctionnel : ajout, packs, quantités, suppression, sous-total, sauvegarde locale (`localStorage`).
-- **Sans numéro WhatsApp configuré**, le panier propose de copier le récapitulatif et indique clairement que la commande
-  n'est pas transmise au restaurant.
-- **Avec `NEXT_PUBLIC_WHATSAPP_NUMBER`**, le bouton « Commander via WhatsApp » ouvre WhatsApp avec un message pré-rempli
-  (articles, quantités, packs, prix, total). La commande n'est transmise qu'une fois le message envoyé par le client.
-- Aucun paiement en ligne et aucun faux écran de confirmation.
+1. Panier : ajout, packs, quantités, suppression, sous-total, sauvegarde locale (`localStorage`).
+2. « Commander » : formulaire (livraison / à emporter / sur place, nom, téléphone algérien validé, adresse si
+   livraison, heure souhaitée, remarque). Les coordonnées sont mémorisées pour la commande suivante.
+3. Envoi : la messagerie SMS du client s'ouvre avec la commande complète adressée au 0797 98 11 97
+   (`sms:`). La commande part quand le client appuie sur « Envoyer ». Boutons « Appeler » et « Copier » en secours.
+4. Si `NEXT_PUBLIC_WHATSAPP_NUMBER` est défini, WhatsApp devient le canal principal (SMS en secours).
+
+Le statut « ouvert / fermé » est calculé à l'heure d'Alger ; hors horaires, le formulaire le signale.
+Aucun paiement en ligne et aucune fausse confirmation : le site indique clairement que l'envoi se fait depuis
+le téléphone du client.
+
+## Statistiques (Vercel Analytics)
+
+`@vercel/analytics` est installé (`<Analytics />` dans `app/layout.tsx`). Activer **Analytics** dans le projet Vercel
+pour voir les visites, pages vues, pays et appareils. Rien n'est collecté en développement.
+
+Événements personnalisés (visibles sur les offres Vercel qui les incluent) : `add_to_cart` (produit, pack, quantité)
+et `order_sent` (canal, mode, nombre d'articles, total). Aucune donnée personnelle n'est transmise.
+
+## Supports imprimés
+
+Dossier `print/` : QR code vers https://meatlove.vercel.app/ (correction d'erreur H, logo au centre), vérifié au
+décodage.
+
+- `meatlove-affiche-qr-A4.pdf` : affiche A4 vectorielle pour l'entrée du restaurant (à envoyer à l'imprimeur)
+- `meatlove-affiche-qr-A4.png` : même affiche en 300 dpi
+- `meatlove-qr.svg` / `meatlove-qr.png` : QR code seul (vitrine, flyers, tickets)
+
+Si le site change d'adresse (nom de domaine), le QR code doit être régénéré.
 
 ## Déploiement
 

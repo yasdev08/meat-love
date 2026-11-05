@@ -44,7 +44,7 @@ export function ProductCard({ product, variant = "card", className, priority }: 
   if (variant === "row") {
     return (
       <article className={cn("group relative flex items-center gap-4 rounded-2xl border border-ivory/10 bg-coal-900/60 p-3 pr-4 transition-colors hover:border-ivory/25", className)}>
-        <DishVisual product={product} sizes="80px" className="size-[4.5rem] shrink-0 rounded-xl sm:size-20" />
+        <DishVisual product={product} label={false} sizes="80px" className="size-[4.5rem] shrink-0 rounded-xl sm:size-20" />
         <div className="min-w-0 flex-1">
           <h3 className="font-display text-xl leading-tight font-bold uppercase break-words">
             <button type="button" onClick={open} className="text-left after:absolute after:inset-0 after:rounded-2xl">

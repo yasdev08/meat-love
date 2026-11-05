@@ -12,7 +12,7 @@ import {
   setQuantity,
   type CartItem,
 } from "../lib/cart";
-import { buildOrderMessage, buildWhatsAppUrl } from "../lib/order";
+import { buildOrderMessage, buildSmsUrl, buildWhatsAppUrl, isValidAlgerianPhone, validateOrder } from "../lib/order";
 
 const resolve = (items: CartItem[]) => resolveCart(items, getProduct);
 
@@ -84,7 +84,7 @@ test("order message lists names, quantities, packs, prices and total — and is 
       "• 1 × Collier d'agneau — Pack 4 : 9 000 DA",
       "• 2 × Chicken Burger : 1 500 DA",
       "",
-      "Total : 10 500 DA",
+      "Total articles : 10 500 DA",
     ].join("\n"),
   );
   // Numéro factice, uniquement pour vérifier l'encodage.
@@ -92,4 +92,41 @@ test("order message lists names, quantities, packs, prices and total — and is 
   assert.ok(url.startsWith("https://wa.me/213000000000?text="));
   assert.equal(decodeURIComponent(url.split("?text=")[1]), message);
   assert.equal(buildWhatsAppUrl("abc", message), null);
+});
+
+test("checkout details are validated and included in the order message", () => {
+  assert.ok(isValidAlgerianPhone("0550 12 34 56"));
+  assert.ok(isValidAlgerianPhone("+213 797 98 11 97"));
+  assert.ok(!isValidAlgerianPhone("12345"));
+  assert.deepEqual(Object.keys(validateOrder({ mode: "livraison", name: "", phone: "1", address: "" })).sort(), ["address", "name", "phone"]);
+  assert.deepEqual(validateOrder({ mode: "emporter", name: "Amine", phone: "0661234567" }), {});
+
+  const lines = resolve([{ productId: "epaule-agneau", packId: "pack-3", quantity: 1 }]);
+  const message = buildOrderMessage(lines, "Meat Love", {
+    mode: "livraison",
+    name: "Amine",
+    phone: "0661 23 45 67",
+    address: "Cité 100 logements, bloc B",
+    time: "20:30",
+    notes: "Sans piment",
+  });
+  assert.equal(
+    message,
+    [
+      "Commande Meat Love — Livraison",
+      "Nom : Amine",
+      "Tél : 0661 23 45 67",
+      "Adresse : Cité 100 logements, bloc B",
+      "Heure : 20:30",
+      "",
+      "• 1 × Épaule d'agneau — Pack 3 : 8 000 DA",
+      "",
+      "Total articles : 8 000 DA",
+      "",
+      "Remarque : Sans piment",
+    ].join("\n"),
+  );
+  const sms = buildSmsUrl("+213797981197", message);
+  assert.ok(sms.startsWith("sms:+213797981197?&body="));
+  assert.equal(decodeURIComponent(sms.split("&body=")[1]), message);
 });

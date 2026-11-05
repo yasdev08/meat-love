@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { track } from "@vercel/analytics";
 import { getProduct } from "@/data/menu";
 import {
   addItem as addCartItem,
@@ -80,6 +81,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setPulse((n) => n + 1);
     const product = getProduct(item.productId);
     const pack = product?.packs?.find((p) => p.id === item.packId);
+    track("add_to_cart", { product: item.productId, pack: item.packId ?? null, quantity: item.quantity });
     if (product) {
       setAnnouncement(`${item.quantity} × ${product.name}${pack ? ` (${pack.label})` : ""} ajouté au panier`);
     }

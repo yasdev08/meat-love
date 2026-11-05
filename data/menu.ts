@@ -92,7 +92,7 @@ export const categories: readonly Category[] = [
   {
     id: "burgers",
     name: "Burgers",
-    tagline: "Trois classiques de la maison.",
+    tagline: "Smashés, servis chauds.",
   },
   {
     id: "viandes-fumees",

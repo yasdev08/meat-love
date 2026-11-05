@@ -1,27 +1,36 @@
 "use client";
 
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 import { useState } from "react";
-import { ClipboardCheck, Copy, MessageCircle, Phone, ShoppingBag, Trash2, X } from "lucide-react";
+import { ArrowLeft, ClipboardCheck, Copy, MessageCircle, MessageSquareText, Phone, ShoppingBag, Trash2, X } from "lucide-react";
 import { site } from "@/data/site";
 import { formatDA } from "@/lib/format";
-import { buildOrderMessage, buildWhatsAppUrl } from "@/lib/order";
+import { buildOrderMessage, buildSmsUrl, buildWhatsAppUrl, type OrderDetails } from "@/lib/order";
 import { useCart } from "./CartProvider";
+import { CheckoutForm } from "./CheckoutForm";
 import { DishVisual } from "@/components/DishVisual";
 import { Sheet } from "@/components/ui/Sheet";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { buttonClass } from "@/components/ui/Button";
 
+type Step = "cart" | "checkout" | "sent";
+
 export function CartDrawer() {
   const { lines, count, subtotal, isOpen, close, setQuantity, remove, clear } = useCart();
+  const [step, setStep] = useState<Step>("cart");
+  const [sentVia, setSentVia] = useState<"sms" | "whatsapp" | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const message = buildOrderMessage(lines, site.name);
-  const whatsappUrl = site.whatsapp ? buildWhatsAppUrl(site.whatsapp, message) : null;
+  const handleClose = () => {
+    close();
+    // Revient au panier à la prochaine ouverture (sauf si une commande vient d'être préparée).
+    if (step === "checkout") setStep("cart");
+  };
 
-  async function copySummary() {
+  async function copy(text: string) {
     try {
-      await navigator.clipboard.writeText(message);
+      await navigator.clipboard.writeText(text);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2500);
     } catch {
@@ -29,29 +38,107 @@ export function CartDrawer() {
     }
   }
 
+  function send(details: OrderDetails, channel: "sms" | "whatsapp") {
+    const message = buildOrderMessage(lines, site.name, details);
+    const url =
+      channel === "whatsapp" && site.whatsapp
+        ? buildWhatsAppUrl(site.whatsapp, message)
+        : site.phone
+          ? buildSmsUrl(site.phone.tel, message)
+          : null;
+    if (!url) return;
+    // Aucune donnée personnelle (nom, téléphone, adresse) n'est envoyée.
+    track("order_sent", { channel, mode: details.mode, items: count, total: subtotal });
+    setSentVia(channel);
+    setStep("sent");
+    if (channel === "whatsapp") window.open(url, "_blank", "noopener,noreferrer");
+    else window.location.href = url;
+  }
+
+  const title = step === "checkout" ? "Vos coordonnées" : step === "sent" ? "Dernière étape" : "Votre commande";
+
   return (
-    <Sheet open={isOpen} onClose={close} side="right" labelledBy="cart-title">
+    <Sheet open={isOpen} onClose={handleClose} side="right" labelledBy="cart-title">
       <div className="flex h-full flex-col">
-        <header className="flex items-center justify-between gap-4 border-b border-ivory/10 px-6 py-5">
-          <div>
-            <h2 id="cart-title" className="font-display text-2xl font-extrabold uppercase tracking-wide">
-              Votre commande
-            </h2>
-            <p className="text-sm text-ash">
-              {count === 0 ? "Aucun article" : `${count} article${count > 1 ? "s" : ""}`}
-            </p>
+        <header className="flex items-center justify-between gap-3 border-b border-ivory/10 px-6 py-5">
+          <div className="flex min-w-0 items-center gap-2">
+            {step === "checkout" ? (
+              <button
+                type="button"
+                onClick={() => setStep("cart")}
+                className="-ml-3 grid size-11 shrink-0 place-items-center rounded-full text-ash transition-colors hover:bg-ivory/5 hover:text-ivory"
+                aria-label="Retour au panier"
+              >
+                <ArrowLeft className="size-5" aria-hidden />
+              </button>
+            ) : null}
+            <div className="min-w-0">
+              <h2 id="cart-title" className="truncate font-display text-2xl font-extrabold uppercase tracking-wide">
+                {title}
+              </h2>
+              <p className="text-sm text-ash">
+                {count === 0 ? "Aucun article" : `${count} article${count > 1 ? "s" : ""} · ${formatDA(subtotal)}`}
+              </p>
+            </div>
           </div>
           <button
             type="button"
-            onClick={close}
-            className="grid size-11 place-items-center rounded-full text-ash transition-colors hover:bg-ivory/5 hover:text-ivory"
+            onClick={handleClose}
+            className="grid size-11 shrink-0 place-items-center rounded-full text-ash transition-colors hover:bg-ivory/5 hover:text-ivory"
             aria-label="Fermer le panier"
           >
             <X className="size-5" aria-hidden />
           </button>
         </header>
 
-        {lines.length === 0 ? (
+        {step === "sent" ? (
+          <div className="flex flex-1 flex-col justify-center gap-6 overflow-y-auto px-6 py-10">
+            <div className="grid size-16 place-items-center rounded-full bg-ember/15 text-ember-bright">
+              {sentVia === "whatsapp" ? <MessageCircle className="size-7" aria-hidden /> : <MessageSquareText className="size-7" aria-hidden />}
+            </div>
+            <div>
+              <p className="font-serif text-3xl leading-tight italic">Votre commande est prête à partir.</p>
+              <p className="mt-3 leading-relaxed text-cream/80">
+                {sentVia === "whatsapp" ? "WhatsApp s’est ouvert" : "Votre messagerie s’est ouverte"} avec le détail de votre commande.
+                <strong className="text-ivory"> Appuyez sur « Envoyer »</strong> pour la transmettre à Meat Love.
+              </p>
+              {site.phone ? (
+                <p className="mt-3 text-sm text-ash">
+                  Rien ne s&apos;est ouvert ? Appelez-nous au{" "}
+                  <a href={`tel:${site.phone.tel}`} className="whitespace-nowrap text-cream underline underline-offset-4">
+                    {site.phone.display}
+                  </a>
+                  .
+                </p>
+              ) : null}
+            </div>
+            <div className="flex flex-col gap-3">
+              {site.phone ? (
+                <a href={`tel:${site.phone.tel}`} className={buttonClass("outline", "w-full")}>
+                  <Phone className="size-4" aria-hidden /> Appeler le restaurant
+                </a>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => {
+                  clear();
+                  setStep("cart");
+                  close();
+                }}
+                className={buttonClass("primary", "w-full")}
+              >
+                C&apos;est envoyé
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep("checkout")}
+                className="mx-auto min-h-11 text-sm text-smoke underline-offset-4 hover:text-ivory hover:underline"
+              >
+                Modifier la commande
+              </button>
+            </div>
+          </div>
+        ) : lines.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-6 px-8 text-center">
             <div className="relative grid size-24 place-items-center rounded-full border border-ivory/10">
               <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--color-ember)_30%,transparent),transparent_70%)]" />
@@ -61,16 +148,23 @@ export function CartDrawer() {
               <p className="font-serif text-3xl italic">Votre panier est vide.</p>
               <p className="mt-2 text-ash">La braise n&apos;attend que vous. Parcourez la carte pour composer votre commande.</p>
             </div>
-            <Link href="/menu" onClick={close} className={buttonClass("primary")}>
+            <Link href="/menu" onClick={handleClose} className={buttonClass("primary")}>
               Découvrir le menu
             </Link>
           </div>
+        ) : step === "checkout" ? (
+          <CheckoutForm
+            subtotal={subtotal}
+            onSend={send}
+            onCopy={(details) => copy(buildOrderMessage(lines, site.name, details))}
+            copied={copied}
+          />
         ) : (
           <>
             <ul className="flex-1 divide-y divide-ivory/10 overflow-y-auto overscroll-contain px-6">
               {lines.map((line) => (
                 <li key={line.key} className="flex gap-4 py-5">
-                  <DishVisual product={line.product} sizes="80px" className="size-20 shrink-0 rounded-xl" />
+                  <DishVisual product={line.product} label={false} sizes="80px" className="size-20 shrink-0 rounded-xl" />
                   <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
@@ -109,37 +203,17 @@ export function CartDrawer() {
                 <span className="font-display text-sm font-bold uppercase tracking-[0.22em] text-ash">Sous-total</span>
                 <span className="font-display text-3xl font-extrabold tabular-nums">{formatDA(subtotal)}</span>
               </div>
-
-              {whatsappUrl ? (
-                <>
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={buttonClass("primary", "w-full")}>
-                    <MessageCircle className="size-5" aria-hidden />
-                    Commander via WhatsApp
-                  </a>
-                  <p className="text-xs leading-relaxed text-ash">
-                    Le récapitulatif s&apos;ouvre dans WhatsApp. La commande n&apos;est transmise au restaurant qu&apos;une fois
-                    le message envoyé, et confirmée par le restaurant.
-                  </p>
-                </>
+              {site.phone || site.whatsapp ? (
+                <button type="button" onClick={() => setStep("checkout")} className={buttonClass("primary", "w-full")}>
+                  Commander
+                </button>
               ) : (
-                <>
-                  <button type="button" onClick={copySummary} className={buttonClass("primary", "w-full")}>
-                    {copied ? <ClipboardCheck className="size-5" aria-hidden /> : <Copy className="size-5" aria-hidden />}
-                    {copied ? "Récapitulatif copié" : "Copier le récapitulatif"}
-                  </button>
-                  {site.phone ? (
-                    <a href={`tel:${site.phone.replace(/\s/g, "")}`} className={buttonClass("outline", "w-full")}>
-                      <Phone className="size-4" aria-hidden />
-                      Appeler le restaurant
-                    </a>
-                  ) : null}
-                  <p className="text-xs leading-relaxed text-ash">
-                    La commande en ligne sera activée prochainement. Ce panier prépare votre récapitulatif ; il
-                    n&apos;est pas encore transmis au restaurant.
-                  </p>
-                </>
+                <button type="button" onClick={() => copy(buildOrderMessage(lines, site.name))} className={buttonClass("primary", "w-full")}>
+                  {copied ? <ClipboardCheck className="size-5" aria-hidden /> : <Copy className="size-5" aria-hidden />}
+                  {copied ? "Récapitulatif copié" : "Copier le récapitulatif"}
+                </button>
               )}
-
+              <p className="text-center text-xs text-ash">{site.services.join(" · ")}</p>
               <button
                 type="button"
                 onClick={clear}

@@ -7,9 +7,10 @@ import { ProductCard } from "@/components/menu/ProductCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { RestaurantJsonLd } from "@/components/seo/RestaurantJsonLd";
+import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
-  title: "Menu — viandes fumées, burgers, poulet & desserts",
+  title: "Menu & prix — agneau fumé, burgers, grillades",
   description:
     "La carte complète Meat Love : épaule d'agneau, Lamb Tchang et collier d'agneau fumés en packs, Smoked Brisket Burger, poulet fumé, entrées chaudes, desserts et boissons. Prix en dinars algériens.",
   alternates: { canonical: "/menu" },
@@ -112,6 +113,7 @@ export default function MenuPage() {
   return (
     <>
       <RestaurantJsonLd />
+      <BreadcrumbJsonLd items={[{ name: "Menu", path: "/menu" }]} />
       <header id="carte" className="relative overflow-hidden pt-[calc(var(--header-h)+4rem)] pb-14 sm:pb-20">
         <div aria-hidden className="pointer-events-none absolute -top-40 right-[-15%] h-[36rem] w-[36rem] rounded-full bg-ember/20 blur-[120px]" />
         <div className={cn(container, "relative")}>
@@ -123,7 +125,7 @@ export default function MenuPage() {
           </Reveal>
           <Reveal delay={120} className="mt-8 grid gap-6 lg:grid-cols-2 lg:items-end">
             <p className="max-w-xl text-lg leading-relaxed text-cream/80">
-              Viandes fumées, agneau, burgers, poulet grillé et fumé. Touchez un plat pour le détail, puis
+              Burgers smashés, grillades au charbon, agneau fumé et sauces maison. Touchez un plat pour le détail, puis
               ajoutez-le à votre commande.
             </p>
             <p className="text-sm text-ash lg:text-right">Prix en dinars algériens (DA).</p>

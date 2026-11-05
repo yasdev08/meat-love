@@ -6,6 +6,7 @@ import { RestaurantJsonLd } from "@/components/seo/RestaurantJsonLd";
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
+// Le titre et la description par défaut (app/layout.tsx) s'appliquent à l'accueil.
 
 export default function HomePage() {
   return (
