@@ -114,6 +114,17 @@ pour voir les visites, pages vues, pays et appareils. Rien n'est collecté en d�
 Événements personnalisés (visibles sur les offres Vercel qui les incluent) : `add_to_cart` (produit, pack, quantité)
 et `order_sent` (canal, mode, nombre d'articles, total). Aucune donnée personnelle n'est transmise.
 
+## Supports imprimés
+
+Dossier `print/` : QR code vers https://meatlove.vercel.app/ (correction d'erreur H, logo au centre), vérifié au
+décodage.
+
+- `meatlove-affiche-qr-A4.pdf` : affiche A4 vectorielle pour l'entrée du restaurant (à envoyer à l'imprimeur)
+- `meatlove-affiche-qr-A4.png` : même affiche en 300 dpi
+- `meatlove-qr.svg` / `meatlove-qr.png` : QR code seul (vitrine, flyers, tickets)
+
+Si le site change d'adresse (nom de domaine), le QR code doit être régénéré.
+
 ## Déploiement
 
 Aucune configuration d'hébergement n'existait dans le dépôt. Le site est 100 % statique et se déploie tel quel sur
